@@ -1,7 +1,12 @@
-#include <BluetoothSerial.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_LEDBackpack.h>
+
+//#include <BluetoothSerial.h>
 
 uint8_t buffer[80];
 bool last_rc = false;
+Adafruit_7segment matrix = Adafruit_7segment();
 
 uint8_t hex_to_dec(char d1, char d2) {
 	uint8_t value = 0;
@@ -24,8 +29,13 @@ uint8_t hex_to_dec(char d1, char d2) {
 void setup()
 {
 	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
-	delay(5000);
-	Serial.println("accuvolume external display.");
+	matrix.begin(0x70);
+
+	matrix.print(9999, DEC);
+
+	delay(1000);
+	//Serial.println("accuvolume external display.");
+
 }
 
 void loop()
@@ -65,8 +75,9 @@ void loop()
 				//solution tank gallons.
 				gallons = hex_to_dec(buffer[7], buffer[8]) << 8;
 				gallons += hex_to_dec(buffer[5], buffer[6]);
-				Serial.print(gallons);
-				Serial.println(" gallons.");
+				//Serial.print(gallons);
+				//Serial.println(" gallons.");
+				matrix.print(gallons, DEC);
 				last_rc = false;
 			}
 		}
