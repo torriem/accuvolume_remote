@@ -31,9 +31,15 @@ void setup()
 	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
 	matrix.begin(0x70);
 
-	matrix.print(9999, DEC);
-
 	delay(1000);
+	//matrix.print(9999, DEC);
+	matrix.print(8888, DEC);
+	matrix.writeDisplay();
+	delay(500);
+	matrix.print(10000, DEC);
+	matrix.writeDisplay();
+
+	//delay(5000);
 	//Serial.println("accuvolume external display.");
 
 }
@@ -78,6 +84,7 @@ void loop()
 				//Serial.print(gallons);
 				//Serial.println(" gallons.");
 				matrix.print(gallons, DEC);
+				matrix.writeDisplay();
 				last_rc = false;
 			}
 		}
