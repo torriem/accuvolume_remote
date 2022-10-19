@@ -5,8 +5,13 @@
 // https://github.com/sparkfun/SevSeg
 #include <EEPROM.h>
 #include <SevSeg.h>
-#define DISPLAY_TYPE 1 //S7S driver
 #include "settings.h"
+
+#define S7S            1
+#define OPENSEGMENT    2
+#define S7SHIELD       3
+#define DISPLAY_TYPE S7S
+
 
 /*
  This code intended to run on a Sparkfun 7 segment display module,
@@ -53,31 +58,58 @@ uint8_t hex_to_dec(char d1, char d2) {
 void setup()
 {
 	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
-	matrix.begin(0x70);
 	setupDisplay();
 	checkEmergencyReset();
+	myDisplay.SetBrightness(100);
 
 	pinMode(A7, INPUT);
 	interrupts();
 
-	delay(1000);
-	//matrix.print(9999, DEC);
-	matrix.print(8888, DEC);
-	matrix.writeDisplay();
-	delay(500);
-	matrix.print(10000, DEC);
-	matrix.writeDisplay();
+	if(matrix.begin(0x70)) {
+		delay(500);
+		matrix.print(8888, DEC);
+		matrix.writeDisplay();
 
-	display.digits[0] = ' ';
-	display.digits[1] = 'G';
-	display.digits[2] = 'A';
-	display.digits[3] = 'L';
-	display.decimals = 0;
-	myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
+		delay(500);
+		matrix.print(10000, DEC);
+		matrix.writeDisplay();
+
+	} else {
+		while (1) {
+			for(int i=0; i<100; i++) {
+				display.digits[0] = 'I';
+				display.digits[1] = '2';
+				display.digits[2] = 'c';
+				display.digits[3] = ' ';
+				display.decimals = 0;
+			
+				myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
+				delay(10);
+			}
+
+			for(int i=0; i<100; i++) {
+				display.digits[0] = 'E';
+				display.digits[1] = 'r';
+				display.digits[2] = 'r';
+				display.digits[3] = ' ';
+				display.decimals = 0;
+			
+				myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
+				delay(10);
+			}
+		}
+			
+
+	}
+
+	/*
+
+	//matrix.print(9999, DEC);
+
 
 	//delay(5000);
 	//Serial.println("accuvolume external display.");
-
+	*/
 }
 
 void loop()
@@ -87,6 +119,13 @@ void loop()
 	uint8_t index = 0;
 	uint16_t gallons = 0;
 
+	display.digits[0] = ' ';
+	display.digits[1] = 'G';
+	display.digits[2] = 'A';
+	display.digits[3] = 'L';
+	display.decimals = 0;
+	
+	myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
 	/*
 	analogValue7 = analogRead(A7);
 	float raw = ((analogValue7 * 5) / (float)1024) / 0.016 - 60.625;
@@ -132,6 +171,7 @@ void loop()
 	display.decimals = 0;
 	myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
 
+	/*
 	while (c != '%') { //look for start of message
 		if(Serial.available()) {
 			c = Serial.read();
@@ -171,4 +211,5 @@ const unsigned char BRIGHTNESS_ADDRESS = 0;
 			}
 		}
 	}
+	*/
 }
