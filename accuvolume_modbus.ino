@@ -57,13 +57,12 @@ uint8_t hex_to_dec(char d1, char d2) {
 
 void setup()
 {
-	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
-	setupDisplay();
-	checkEmergencyReset();
+	setupDisplay(myDisplay);
 	myDisplay.SetBrightness(100);
+	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
 
 	pinMode(A7, INPUT);
-	interrupts();
+	//interrupts();
 
 	if(matrix.begin(0x70)) {
 		delay(500);
@@ -102,14 +101,14 @@ void setup()
 
 	}
 
-	/*
+	
 
 	//matrix.print(9999, DEC);
 
 
 	//delay(5000);
 	//Serial.println("accuvolume external display.");
-	*/
+	
 }
 
 void loop()
@@ -166,16 +165,16 @@ void loop()
 			display.digits[3] = 'x';
 		}
 	}
-	*/
 
 	display.decimals = 0;
 	myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
+	*/
 
-	/*
 	while (c != '%') { //look for start of message
 		if(Serial.available()) {
 			c = Serial.read();
 		}
+		myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
 	}
 
 	while (c != 13 and index < 79) { //look for end of message
@@ -188,6 +187,7 @@ void loop()
 
 	buffer[index] = 0; //terminate
 	//Serial.print("buffer is length ");
+	Serial.println((const char *)buffer);
 	//Serial.println(index);
 
 	if(index == 12) {
@@ -202,14 +202,12 @@ void loop()
 				//solution tank gallons.
 				gallons = hex_to_dec(buffer[7], buffer[8]) << 8;
 				gallons += hex_to_dec(buffer[5], buffer[6]);
-				//Serial.print(gallons);
-				//Serial.println(" gallons.");
-const unsigned char BRIGHTNESS_ADDRESS = 0;
+				Serial.print(gallons);
+				Serial.println(" gallons.");
 				matrix.print(gallons, DEC);
 				matrix.writeDisplay();
 				last_rc = false;
 			}
 		}
 	}
-	*/
 }
