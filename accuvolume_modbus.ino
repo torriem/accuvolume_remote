@@ -93,8 +93,8 @@ void setup()
 	setupDisplay(myDisplay);
 	myDisplay.SetBrightness(100);
 #endif
-	//Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
-	Serial.begin(115200);
+	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
+	//Serial.begin(115200);
 
 	pinMode(A7, INPUT);
 	//interrupts();
