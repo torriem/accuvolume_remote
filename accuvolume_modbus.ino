@@ -187,7 +187,7 @@ void loop()
 
 	buffer[index] = 0; //terminate
 	//Serial.print("buffer is length ");
-	Serial.println((const char *)buffer);
+	//Serial.println((const char *)buffer);
 	//Serial.println(index);
 
 	if(index == 12) {
@@ -202,8 +202,8 @@ void loop()
 				//solution tank gallons.
 				gallons = hex_to_dec(buffer[7], buffer[8]) << 8;
 				gallons += hex_to_dec(buffer[5], buffer[6]);
-				Serial.print(gallons);
-				Serial.println(" gallons.");
+				//Serial.print(gallons);
+				//Serial.println(" gallons.");
 				matrix.print(gallons, DEC);
 				matrix.writeDisplay();
 				last_rc = false;
