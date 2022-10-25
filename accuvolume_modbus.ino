@@ -26,8 +26,11 @@ SevSeg myDisplay;
  This code intended to run on a Sparkfun 7 segment display module,
  driving a Adafruit 1.2" 7 segment backpack on i2c.
 
- The Sparkfun 7 segment is a sparge pressure display, and the
- 1.2" backpack is the accuvolume tank volume.
+ I wanted to use the Sparkfun 7 segment unit to decode the
+ modbus traffic and also measure sparge pressure, but the
+ clock speed of the 7 segment does not seem to allow the
+ serial to work properly, so this is not used.  USE_SSEG
+ is not defined.
  */
 
 uint8_t buffer[80];
@@ -99,7 +102,7 @@ void setup()
 	pinMode(A7, INPUT);
 	//interrupts();
 
-	delay(5000);
+	delay(1000);
 	Serial.println("initializing big display.");
 	if(matrix.begin(0x70)) {
 		delay(500);
