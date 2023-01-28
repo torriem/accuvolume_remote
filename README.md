@@ -9,4 +9,5 @@ like this:
 Always the same length, first 4 digits are hex, little endian, gallons. That 
 example message is 0x0012, which is 18 gallons.
 
+![frizting diagram](accuvolume_remote_fritzing.png)
 
