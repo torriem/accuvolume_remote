@@ -1,36 +1,11 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_LEDBackpack.h>
-// This code uses the SevSeg library, which can be donwnloaded from:
-// https://github.com/sparkfun/SevSeg
 #include <EEPROM.h>
 
-//#define USE_SSEG 1
-
-#include <SevSeg.h>
-#include "settings.h"
-
-
-
-#define S7S            1
-#define OPENSEGMENT    2
-#define S7SHIELD       3
-#define DISPLAY_TYPE S7S
-
-#ifdef USE_SSEG
-SevSeg myDisplay;
-
-#endif
-
 /*
- This code intended to run on a Sparkfun 7 segment display module,
+ This code intended to run on an Arduino uno or mini
  driving a Adafruit 1.2" 7 segment backpack on i2c.
-
- I wanted to use the Sparkfun 7 segment unit to decode the
- modbus traffic and also measure sparge pressure, but the
- clock speed of the 7 segment does not seem to allow the
- serial to work properly, so this is not used.  USE_SSEG
- is not defined.
  */
 
 uint8_t buffer[80];
@@ -92,10 +67,6 @@ void set_digits(struct display &display, uint16_t number) {
 
 void setup()
 {
-#ifdef USE_SSG	
-	setupDisplay(myDisplay);
-	myDisplay.SetBrightness(100);
-#endif
 	Serial.begin(115200,SERIAL_8O1); //modbus needs odd parity in this case
 	//Serial.begin(115200);
 
@@ -113,48 +84,12 @@ void setup()
 		matrix.print(10000, DEC);
 		matrix.writeDisplay();
 
-#ifdef USE_SSG
-		set_digits(display,8888);
-		while(1) {
-			myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
-			
-		}
-#endif
 	} else {
 		while (1) {
-#ifdef USE_SSEG
-			for(int i=0; i<100; i++) {
-				display.digits[0] = 'I';
-				display.digits[1] = '2';
-				display.digits[2] = 'c';
-				display.digits[3] = ' ';
-				display.decimals = 0;
-			
-				myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
-				delay(10);
-			}
-
-			for(int i=0; i<100; i++) {
-				display.digits[0] = 'E';
-				display.digits[1] = 'r';
-				display.digits[2] = 'r';
-				display.digits[3] = ' ';
-				display.decimals = 0;
-			
-				myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
-				delay(10);
-			}
-#else
 			Serial.println("I2C Error!");
 			delay(1000);
-#endif
 		}
 	}
-
-	
-
-	//matrix.print(9999, DEC);
-
 
 	//delay(5000);
 	//Serial.println("accuvolume external display.");
@@ -168,67 +103,10 @@ void loop()
 	uint8_t index = 0;
 	uint16_t gallons = 0;
 
-	display.digits[0] = ' ';
-	display.digits[1] = 'G';
-	display.digits[2] = 'A';
-	display.digits[3] = 'L';
-	display.decimals = 0;
-	
-#ifdef USE_SSEG
-	myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
-#endif
-	/*
-	analogValue7 = analogRead(A7);
-	float raw = ((analogValue7 * 5) / (float)1024) / 0.016 - 60.625;
-	int psi = round(raw);
-
-	if (psi<0) {
-		display.digits[0]='-';
-		display.digits[1]='-';
-		display.digits[2]='-';
-		display.digits[3]='-';
-
-	} else {
-
-		psi_filtered = psi_filtered * 0.3 + psi * 0.7;
-
-		psi = psi_filtered;
-
-		//TODO: filter PSI
-
-		//Serial.print(raw);
-		//Serial.print(' ');
-		//Serial.println(psi);
-
-		if (psi > 99) { //three digits
-			display.digits[0] = psi / 100;
-			display.digits[1] = (psi / 10) % 10;
-			display.digits[2] = psi % 10;
-			display.digits[3] = 'x';
-		} else if (psi > 9) { //two digits
-			display.digits[0] = psi / 10;
-			display.digits[1] = psi % 10;
-			display.digits[2] = 'x';
-			display.digits[3] = 'x';
-		} else { //one digit
-			display.digits[0] = psi;
-			display.digits[1] = 'x';
-			display.digits[2] = 'x';
-			display.digits[3] = 'x';
-		}
-	}
-
-	display.decimals = 0;
-	myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
-	*/
-
 	while (c != '%') { //look for start of message
 		if(Serial.available()) {
 			c = Serial.read();
 		}
-#ifdef USE_SSEG
-		myDisplay.DisplayString(display.digits, display.decimals); //(numberToDisplay, decimal point location)
-#endif
 	}
 
 	while (c != 13 and index < 79) { //look for end of message
